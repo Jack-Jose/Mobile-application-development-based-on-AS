@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/nav_home" android:title="首页" android:icon="@drawable/ic_nav_home"/>
+    <item android:id="@+id/nav_book" android:title="预约" android:icon="@drawable/ic_nav_book"/>
+    <item android:id="@+id/nav_rooms" android:title="会议室" android:icon="@drawable/ic_nav_rooms"/>
+    <item android:id="@+id/nav_my" android:title="我的预约" android:icon="@drawable/ic_nav_my"/>
+    <item android:id="@+id/nav_stats" android:title="统计" android:icon="@drawable/ic_nav_stats"/>
+</menu>

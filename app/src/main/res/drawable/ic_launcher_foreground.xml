@@ -1,0 +1,37 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 门框 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:pathData="M36,30 L36,78 L72,78 L72,42 L60,30 Z"/>
+    <!-- 门板 -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M40,38 L40,74 L54,74 L54,46 L47,38 Z"/>
+    <!-- 门把手（小圆用path画） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51,55 A3,3 0 1,0 51,56 Z"/>
+    <!-- 时钟外框 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#2563EB"
+        android:strokeWidth="2"
+        android:pathData="M68,24 A10,10 0 1,0 68,44 A10,10 0 1,0 68,24 Z"/>
+    <!-- 时钟指针 -->
+    <path
+        android:fillColor="#2563EB"
+        android:strokeColor="#2563EB"
+        android:strokeWidth="2.5"
+        android:pathData="M68,26 L68,34 L73,34"/>
+    <!-- 时钟中心点 -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M66,32 A2,2 0 1,0 66,36 A2,2 0 1,0 66,32 Z"/>
+</vector>

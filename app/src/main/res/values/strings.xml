@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">meeting</string>
+    <string name="book_meeting">预约会议室</string>
+    <string name="my_reservations">我的预约</string>
+    <string name="all_reservations">预约总表</string>
+    <string name="input_room_id">输入会议室ID</string>
+    <string name="submit_booking">提交预约</string>
+    <string name="select_time">选择预约时间</string>
+    <string name="selected_time">已选时间：未选择</string>
+    <string name="input_duration">预计使用时长（分钟）</string>
+</resources>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/slate_50"
+    android:padding="16dp">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="预约会议室" android:textSize="22sp" android:textStyle="bold"
+        android:gravity="center" android:layout_marginBottom="20dp"
+        android:textColor="@color/slate_800"/>
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="选择会议室" android:textColor="@color/slate_700" android:textSize="13sp" android:layout_marginBottom="4dp"/>
+    <Spinner android:id="@+id/sp_room" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_marginBottom="14dp"/>
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="会议主题" android:textColor="@color/slate_700" android:textSize="13sp" android:layout_marginBottom="4dp"/>
+    <EditText android:id="@+id/et_title" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="请输入会议主题"
+        android:padding="12dp" android:layout_marginBottom="14dp"
+        android:background="@drawable/edit_bg"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="14dp">
+        <EditText android:id="@+id/et_attendees" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="参会人数" android:inputType="number"
+            android:padding="12dp" android:layout_marginEnd="10dp" android:background="@drawable/edit_bg"/>
+        <EditText android:id="@+id/et_duration" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="时长(分钟)" android:inputType="number"
+            android:padding="12dp" android:background="@drawable/edit_bg"/>
+    </LinearLayout>
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="重复模式" android:textColor="@color/slate_700" android:textSize="13sp" android:layout_marginBottom="4dp"/>
+    <Spinner android:id="@+id/sp_recur" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_marginBottom="14dp"/>
+
+    <Button android:id="@+id/btn_select_time" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="选择预约时间"
+        android:backgroundTint="@color/blue_500" android:textColor="@color/white"
+        android:padding="12dp" android:layout_marginBottom="8dp"/>
+    <TextView android:id="@+id/tv_selected_time" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="已选：未选择" android:gravity="center"
+        android:textSize="14sp" android:textColor="@color/slate_700" android:layout_marginBottom="8dp"/>
+
+    <!-- Subscription status -->
+    <TextView android:id="@+id/tv_sub_status" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="未订阅 | ¥99/月"
+        android:textSize="12sp" android:textColor="@color/slate_500"
+        android:gravity="center" android:layout_marginBottom="6dp"/>
+
+    <CheckBox android:id="@+id/cb_subscription" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:text="订阅付费（VIP房8折/普通房85折，押金不变）"
+        android:textSize="13sp" android:textColor="@color/slate_800"
+        android:layout_marginBottom="6dp"/>
+
+    <TextView android:id="@+id/tv_fee_detail" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="请填写使用时长后自动计算费用"
+        android:textSize="12sp" android:textColor="@color/slate_700"
+        android:background="@drawable/card_sm_bg" android:padding="12dp"
+        android:layout_marginBottom="14dp"/>
+
+    <EditText android:id="@+id/et_note" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="备注（可选）"
+        android:padding="12dp" android:layout_marginBottom="18dp"
+        android:background="@drawable/edit_bg"/>
+
+    <Button android:id="@+id/btn_submit" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="提交预约"
+        android:backgroundTint="@color/blue_500" android:textColor="@color/white"
+        android:padding="14dp" android:textSize="16sp"/>
+</LinearLayout>
+</ScrollView>

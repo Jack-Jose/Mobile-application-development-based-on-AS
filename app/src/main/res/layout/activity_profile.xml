@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="30dp"
+    android:background="#FFFFFF">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="个人中心" android:textSize="22sp" android:textStyle="bold"
+        android:textColor="#2563EB" android:layout_marginBottom="30dp"/>
+
+    <!-- 基本信息区 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="14dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content"
+            android:text="用户名：" android:textColor="#666"/>
+        <TextView android:id="@+id/tv_profile_username" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="-" android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="14dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content"
+            android:text="角色：" android:textColor="#666"/>
+        <TextView android:id="@+id/tv_profile_role" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="-"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="14dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content"
+            android:text="部门：" android:textColor="#666"/>
+        <TextView android:id="@+id/tv_profile_dept" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="-"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="30dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content"
+            android:text="手机号：" android:textColor="#666"/>
+        <TextView android:id="@+id/tv_profile_phone" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="-"/>
+    </LinearLayout>
+
+    <!-- 订阅信息区 -->
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="#E0E0E0" android:layout_marginBottom="16dp"/>
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="订阅信息" android:textSize="16sp" android:textStyle="bold"
+        android:textColor="#333" android:layout_marginBottom="14dp"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="10dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content"
+            android:text="状态：" android:textColor="#666"/>
+        <TextView android:id="@+id/tv_profile_sub_status" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="载入中…"
+            android:textStyle="bold" android:textSize="15sp"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="40dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content"
+            android:text="详情：" android:textColor="#666"/>
+        <TextView android:id="@+id/tv_profile_sub_expiry" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="-" android:textSize="13sp"/>
+    </LinearLayout>
+
+    <Button android:id="@+id/btn_logout" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="退出登录"
+        android:backgroundTint="#F44336" android:textColor="#FFFFFF"
+        android:padding="14dp" android:textSize="16sp"/>
+</LinearLayout>

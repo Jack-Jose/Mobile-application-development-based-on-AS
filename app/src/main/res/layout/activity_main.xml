@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/slate_50">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:padding="18dp" android:background="@color/blue_500" android:elevation="4dp">
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="会议室预约系统" android:textSize="20sp" android:textStyle="bold"
+                android:textColor="@color/white"/>
+            <TextView android:id="@+id/tv_welcome" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="欢迎回来" android:textSize="13sp"
+                android:textColor="#B0C4FF" android:layout_marginTop="2dp"/>
+            <TextView android:id="@+id/tv_role_badge" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="用户" android:textSize="10sp"
+                android:textColor="@color/white" android:paddingLeft="8dp" android:paddingRight="8dp"
+                android:paddingTop="2dp" android:paddingBottom="2dp" android:layout_marginTop="4dp"
+                android:background="@drawable/pill_tab"/>
+        </LinearLayout>
+        <TextView android:id="@+id/tv_date" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="" android:textSize="12sp"
+            android:textColor="#B0C4FF"/>
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="14dp">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="快捷操作" android:textSize="15sp" android:textStyle="bold"
+                android:textColor="@color/slate_800" android:layout_marginBottom="10dp"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LinearLayout android:id="@+id/card_book" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="100dp" android:layout_marginEnd="8dp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/card_bg" android:elevation="2dp"
+                    android:clickable="true" android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <TextView android:layout_width="40dp" android:layout_height="40dp"
+                        android:background="@drawable/circle_blue" android:gravity="center"
+                        android:text="📅" android:textSize="20sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="预约会议室" android:textSize="13sp" android:textStyle="bold"
+                        android:textColor="@color/slate_800" android:layout_marginTop="8dp"/>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/card_rooms" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="100dp" android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/card_bg" android:elevation="2dp"
+                    android:clickable="true" android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <TextView android:layout_width="40dp" android:layout_height="40dp"
+                        android:background="@drawable/circle_green" android:gravity="center"
+                        android:text="🏢" android:textSize="20sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="会议室管理" android:textSize="13sp" android:textStyle="bold"
+                        android:textColor="@color/slate_800" android:layout_marginTop="8dp"/>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/card_stats" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="100dp" android:layout_marginStart="4dp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/card_bg" android:elevation="2dp"
+                    android:clickable="true" android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <TextView android:layout_width="40dp" android:layout_height="40dp"
+                        android:background="@drawable/circle_amber" android:gravity="center"
+                        android:text="📊" android:textSize="20sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="数据统计" android:textSize="13sp" android:textStyle="bold"
+                        android:textColor="@color/slate_800" android:layout_marginTop="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginTop="10dp">
+                <LinearLayout android:id="@+id/card_my" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="80dp" android:layout_marginEnd="6dp"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:padding="14dp" android:background="@drawable/card_bg" android:elevation="2dp"
+                    android:clickable="true" android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="📋" android:textSize="22sp" android:layout_marginEnd="10dp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="我的预约" android:textSize="14sp" android:textStyle="bold"
+                            android:textColor="@color/slate_800"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="查看管理预约" android:textSize="11sp" android:textColor="@color/slate_500"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/card_all" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="80dp" android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp" android:orientation="horizontal"
+                    android:gravity="center_vertical" android:padding="14dp"
+                    android:background="@drawable/card_bg" android:elevation="2dp"
+                    android:clickable="true" android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="📅" android:textSize="22sp" android:layout_marginEnd="10dp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="预约总表" android:textSize="14sp" android:textStyle="bold"
+                            android:textColor="@color/slate_800"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="全部预约一览" android:textSize="11sp" android:textColor="@color/slate_500"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/card_profile" android:layout_width="0dp"
+                    android:layout_weight="1" android:layout_height="80dp" android:layout_marginStart="3dp"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:padding="14dp" android:background="@drawable/card_bg" android:elevation="2dp"
+                    android:clickable="true" android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="👤" android:textSize="22sp" android:layout_marginEnd="10dp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                        android:layout_height="wrap_content" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="个人中心" android:textSize="14sp" android:textStyle="bold"
+                            android:textColor="@color/slate_800"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="账号与设置" android:textSize="11sp" android:textColor="@color/slate_500"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 审批中心（仅管理员可见） -->
+            <LinearLayout android:id="@+id/card_approval" android:layout_width="match_parent"
+                android:layout_height="68dp" android:layout_marginTop="14dp"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:padding="14dp" android:background="@drawable/card_bg" android:elevation="2dp"
+                android:clickable="true" android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:visibility="gone">
+                <TextView android:layout_width="44dp" android:layout_height="44dp"
+                    android:background="@drawable/circle_amber" android:gravity="center"
+                    android:text="✅" android:textSize="22sp"/>
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:orientation="vertical"
+                    android:paddingStart="14dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="审批中心" android:textSize="15sp" android:textStyle="bold"
+                        android:textColor="@color/slate_800"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="处理待审批的会议室预约申请" android:textSize="11sp"
+                        android:textColor="@color/slate_500"/>
+                </LinearLayout>
+                <TextView android:id="@+id/tv_pending_count" android:layout_width="36dp"
+                    android:layout_height="36dp" android:background="@drawable/circle_red"
+                    android:gravity="center" android:text="0" android:textSize="14sp"
+                    android:textStyle="bold" android:textColor="@color/white"/>
+            </LinearLayout>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="今日概况" android:textSize="15sp" android:textStyle="bold"
+                android:textColor="@color/slate_800" android:layout_marginTop="18dp"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="68dp" android:layout_marginEnd="6dp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/card_sm_bg" android:elevation="1dp">
+                    <TextView android:id="@+id/tv_today_bookings" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="--" android:textSize="22sp"
+                        android:textStyle="bold" android:textColor="@color/blue_500"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="今日预约" android:textSize="11sp" android:textColor="@color/slate_500"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="68dp" android:layout_marginStart="3dp" android:layout_marginEnd="3dp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/card_sm_bg" android:elevation="1dp">
+                    <TextView android:id="@+id/tv_avail_rooms" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="--" android:textSize="22sp"
+                        android:textStyle="bold" android:textColor="@color/emerald_500"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="可用会议室" android:textSize="11sp" android:textColor="@color/slate_500"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="68dp" android:layout_marginStart="3dp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/card_sm_bg" android:elevation="1dp">
+                    <TextView android:id="@+id/tv_my_count" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="--" android:textSize="22sp"
+                        android:textStyle="bold" android:textColor="@color/amber_500"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="我的预约" android:textSize="11sp" android:textColor="@color/slate_500"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 公告区 -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="系统公告" android:textSize="15sp" android:textStyle="bold"
+                android:textColor="@color/slate_800" android:layout_marginTop="18dp"
+                android:layout_marginBottom="6dp"/>
+            <LinearLayout android:id="@+id/notice_container" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical"
+                android:background="@drawable/card_sm_bg" android:padding="6dp"
+                android:layout_marginBottom="16dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/blue_500"
+        app:itemTextColor="@color/blue_500"
+        app:labelVisibilityMode="labeled"
+        app:elevation="8dp"/>
+
+</LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <EditText android:id="@+id/et_room_name" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="会议室名称" android:padding="12dp"
+        android:background="@drawable/edit_bg" android:layout_marginBottom="10dp"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="10dp">
+        <EditText android:id="@+id/et_room_cap" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="人数" android:inputType="number"
+            android:padding="12dp" android:layout_marginEnd="8dp" android:background="@drawable/edit_bg"/>
+        <EditText android:id="@+id/et_room_base_price" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="单价(¥)" android:inputType="number"
+            android:padding="12dp" android:background="@drawable/edit_bg"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="10dp">
+        <EditText android:id="@+id/et_room_desks" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="桌子数" android:inputType="number"
+            android:padding="12dp" android:layout_marginEnd="8dp" android:background="@drawable/edit_bg"/>
+        <EditText android:id="@+id/et_room_chairs" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="椅子数" android:inputType="number"
+            android:padding="12dp" android:background="@drawable/edit_bg"/>
+    </LinearLayout>
+
+    <EditText android:id="@+id/et_room_equip" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="设备（用逗号分隔）" android:padding="12dp"
+        android:background="@drawable/edit_bg" android:layout_marginBottom="10dp"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginBottom="10dp">
+        <EditText android:id="@+id/et_room_location" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="位置" android:padding="12dp"
+            android:layout_marginEnd="8dp" android:background="@drawable/edit_bg"/>
+        <EditText android:id="@+id/et_room_floor" android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:hint="楼层" android:padding="12dp"
+            android:background="@drawable/edit_bg"/>
+    </LinearLayout>
+
+</LinearLayout>
+</ScrollView>
