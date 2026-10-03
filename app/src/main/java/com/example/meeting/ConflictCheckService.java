@@ -24,6 +24,7 @@ public class ConflictCheckService extends Service {
 
             ContentResolver cr = getContentResolver();
             Cursor c = null;
+            boolean normalConflict = false;
             try {
                 // 只查询有效预约(待审批0/已通过1)，排除已取消3/已拒绝2/已完成4
                 c = cr.query(
@@ -49,15 +50,15 @@ public class ConflictCheckService extends Service {
                                     null
                             );
 
-                            int conflictRole = 0;
-                            if (userCursor != null) {
-                                if (userCursor.moveToFirst()) {
-                                    conflictRole = userCursor.getInt(0);
-                                }
+                            if (userCursor == null) return 2;
+                            try {
+                                if (!userCursor.moveToFirst()) return 2;
+                                // Any administrator conflict takes priority, even if a normal booking is found first.
+                                if (userCursor.getInt(0) >= 1) return 2;
+                                normalConflict = true;
+                            } finally {
                                 userCursor.close();
                             }
-                            // role>=1 为管理员/超管，不可覆盖
-                            return conflictRole >= 1 ? 2 : 1;
                         }
                     } while (c.moveToNext());
                 }
@@ -67,7 +68,7 @@ public class ConflictCheckService extends Service {
             } finally {
                 if (c != null) c.close();
             }
-            return 0;
+            return normalConflict ? 1 : 0;
         }
 
         // 删除普通用户的冲突预约（管理员预约时覆盖）
@@ -100,19 +101,21 @@ public class ConflictCheckService extends Service {
                                 null
                         );
 
-                        int role = 0;
+                        boolean normalUser = false;
                         if (userCursor != null) {
-                            if (userCursor.moveToFirst()) {
-                                role = userCursor.getInt(0);
+                            try {
+                                normalUser = userCursor.moveToFirst() && userCursor.getInt(0) == 0;
+                            } finally {
+                                userCursor.close();
                             }
-                            userCursor.close();
                         }
 
-                        if (role == 0) {
-                            cr.delete(
+                        if (normalUser) {
+                            int deleted = cr.delete(
                                     Uri.withAppendedPath(MeetingProvider.URI_RES, String.valueOf(resId)),
                                     null, null
                             );
+                            if (deleted > 0) AlarmUtil.cancelAlarm(ConflictCheckService.this, resId);
                         }
                     } while (c.moveToNext());
                 }

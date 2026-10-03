@@ -56,6 +56,10 @@ public class FeeCalculator {
     public static String checkBusinessHours(long startMs, long endMs) {
         Calendar s = Calendar.getInstance(); s.setTimeInMillis(startMs);
         Calendar e = Calendar.getInstance(); e.setTimeInMillis(endMs);
+        if (endMs <= startMs || s.get(Calendar.YEAR) != e.get(Calendar.YEAR)
+                || s.get(Calendar.DAY_OF_YEAR) != e.get(Calendar.DAY_OF_YEAR)) {
+            return "预约必须在同一营业日内结束";
+        }
         int sMin = s.get(Calendar.HOUR_OF_DAY) * 60 + s.get(Calendar.MINUTE);
         int eMin = e.get(Calendar.HOUR_OF_DAY) * 60 + e.get(Calendar.MINUTE);
         int openMin = OPEN_HOUR * 60 + OPEN_MIN;

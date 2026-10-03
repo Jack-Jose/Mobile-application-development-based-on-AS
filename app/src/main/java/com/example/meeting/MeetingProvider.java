@@ -132,6 +132,10 @@ public class MeetingProvider extends ContentProvider {
             Log.e(TAG, "Insert failed: " + uri, e);
             return null;
         }
+        if (id < 0) {
+            Log.e(TAG, "Insert returned no row: " + uri);
+            return null;
+        }
         if (getContext() != null) getContext().getContentResolver().notifyChange(uri, null);
         return Uri.withAppendedPath(base, String.valueOf(id));
     }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -31,6 +32,7 @@ import java.util.Locale;
 public class BookingActivity extends AppCompatActivity {
     private ConflictCheckService conflictCheckService;
     private boolean isServiceBound = false;
+    private boolean bindRequested = false;
     private Spinner spRoom, spRecur;
     private EditText etTitle, etAttendees, etDuration, etNote;
     private Button btnSelectTime, btnSubmit;
@@ -238,7 +240,7 @@ public class BookingActivity extends AppCompatActivity {
             Toast.makeText(this, "最长预约6小时", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (selectedStartTime == 0) {
+        if (selectedStartTime <= System.currentTimeMillis()) {
             Toast.makeText(this, "请选择预约时间", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -260,7 +262,6 @@ public class BookingActivity extends AppCompatActivity {
         final String finalTitle = title;
         final String finalNote = note;
         final long finalStart = selectedStartTime;
-        final long finalEnd = endTime;
         boolean wantSub = cbSubscription.isChecked();
         boolean alreadySub = subExpiry > System.currentTimeMillis();
         if (wantSub && !alreadySub) {
@@ -276,72 +277,65 @@ public class BookingActivity extends AppCompatActivity {
                     + "押金：¥" + String.format("%.2f", deposit) + "\n\n"
                     + "合计需付：¥" + String.format("%.2f", previewFee + 99.0)
                     + " + 押金 ¥" + String.format("%.2f", deposit))
-                .setPositiveButton("确认", (d, w) -> doSubmit(finalRoom, finalRoomId, finalTitle, finalAtt, finalNote, finalStart, finalEnd, finalDur))
+                .setPositiveButton("确认", (d, w) -> doSubmit(finalRoom, finalRoomId, finalTitle, finalAtt, finalNote, finalStart, finalDur))
                 .setNegativeButton("取消", null)
                 .show();
             return;
         }
 
-        doSubmit(finalRoom, finalRoomId, finalTitle, finalAtt, finalNote, finalStart, finalEnd, finalDur);
+        doSubmit(finalRoom, finalRoomId, finalTitle, finalAtt, finalNote, finalStart, finalDur);
     }
 
     private void doSubmit(RoomItem room, int roomId, String title, int attendees, String note,
-                          long start, long end, long dur) {
-        int conflict = conflictCheckService.binder.checkConflict(roomId, start, end, currentAdminLv);
-        switch (conflict) {
-            case 0:
-                doInsert(room, roomId, title, attendees, note, start, end, dur);
-                break;
-            case 1:
-                if (currentAdminLv >= 2) {
-                    conflictCheckService.binder.deleteNormalUserConflicts(roomId, start, end);
-                    doInsert(room, roomId, title, attendees, note, start, end, dur);
-                    Toast.makeText(this, "已覆盖普通用户预约", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "该时段已被预约", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case 2:
-                Toast.makeText(this, "该时段已被高级管理员预约", Toast.LENGTH_SHORT).show();
-                break;
+                          long start, long dur) {
+        if (!isServiceBound || conflictCheckService == null || start <= System.currentTimeMillis()) {
+            Toast.makeText(this, "预约时间或服务状态已变化，请重新提交", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        int recur = spRecur.getSelectedItemPosition();
+        long[] starts = ReservationSchedule.starts(start, recur);
+        boolean hasNormalConflict = false;
+        for (int i = 0; i < starts.length; i++) {
+            int conflict = conflictCheckService.binder.checkConflict(
+                    roomId, starts[i], starts[i] + dur * 60_000L, currentAdminLv);
+            if (conflict == 2) {
+                Toast.makeText(this, "重复预约中有时段已被管理员预约", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (conflict == 1) hasNormalConflict = true;
+        }
+        if (hasNormalConflict && currentAdminLv < 2) {
+            Toast.makeText(this, "重复预约中有时段已被预约", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (hasNormalConflict) {
+            for (long occurrence : starts) {
+                conflictCheckService.binder.deleteNormalUserConflicts(
+                        roomId, occurrence, occurrence + dur * 60_000L);
+            }
+        }
+        if (doInsert(room, roomId, title, attendees, note, dur, recur, starts) && hasNormalConflict) {
+            Toast.makeText(this, "已覆盖普通用户预约", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void doInsert(RoomItem room, int roomId, String title, int attendees, String note,
-                          long start, long end, long dur) {
+    private boolean doInsert(RoomItem room, int roomId, String title, int attendees, String note,
+                          long dur, int recur, long[] starts) {
         boolean wantSub = cbSubscription.isChecked();
         boolean alreadySub = subExpiry > System.currentTimeMillis();
         // 只要勾选了就算订阅（已在submitReservation中确认过）
         boolean effectiveSub = wantSub || alreadySub;
 
-        // 如果需要新开订阅，在预约提交时激活
-        if (wantSub && !alreadySub) {
-            long newExpiry = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000;
-            ContentValues ucv = new ContentValues();
-            ucv.put(DBHelper.USER_SUB_EXPIRY, newExpiry);
-            getContentResolver().update(MeetingProvider.URI_USER, ucv,
-                DBHelper.USER_ID + "=?", new String[]{String.valueOf(currentUid)});
-            subExpiry = newExpiry;
-        }
-
         double fee = FeeCalculator.calculateFee(room.capacity, room.basePrice, dur, effectiveSub, room.name);
         double deposit = FeeCalculator.calculateDeposit(room.capacity);
-        int recur = spRecur.getSelectedItemPosition();
-
         int status = currentAdminLv >= 1 ? 1 : 0;
-
-        int times = 1;
-        long interval = 0;
-        if (recur == 1) { times = 7; interval = 24 * 60 * 60 * 1000L; }
-        else if (recur == 2) { times = 4; interval = 7 * 24 * 60 * 60 * 1000L; }
-        else if (recur == 3) { times = 4; interval = 30L * 24 * 60 * 60 * 1000L; }
-
-        for (int i = 0; i < times; i++) {
+        List<Uri> insertedReservations = new ArrayList<>();
+        for (long occurrence : starts) {
             ContentValues cv = new ContentValues();
             cv.put(DBHelper.RES_ROOM_ID, roomId);
             cv.put(DBHelper.RES_USER_ID, currentUid);
-            cv.put(DBHelper.RES_START, start + i * interval);
-            cv.put(DBHelper.RES_END, end + i * interval);
+            cv.put(DBHelper.RES_START, occurrence);
+            cv.put(DBHelper.RES_END, occurrence + dur * 60_000L);
             cv.put(DBHelper.RES_TITLE, title);
             cv.put(DBHelper.RES_ATTENDEES, attendees);
             cv.put(DBHelper.RES_STATUS, status);
@@ -354,16 +348,40 @@ public class BookingActivity extends AppCompatActivity {
             cv.put(DBHelper.RES_DISCOUNT, effectiveSub ?
                 (FeeCalculator.isVipRoom(room.name) ? FeeCalculator.VIP_SUBSCRIPTION_DISCOUNT_PCT : FeeCalculator.SUBSCRIPTION_DISCOUNT_PCT) : 0);
             cv.put(DBHelper.RES_PAID, currentAdminLv >= 1 ? 1 : 0);
-            getContentResolver().insert(MeetingProvider.URI_RES, cv);
+            Uri inserted = getContentResolver().insert(MeetingProvider.URI_RES, cv);
+            if (inserted == null) {
+                for (Uri previous : insertedReservations) getContentResolver().delete(previous, null, null);
+                Toast.makeText(this, "预约保存失败，请检查已有预约", Toast.LENGTH_LONG).show();
+                return false;
+            }
+            insertedReservations.add(inserted);
+        }
+
+        if (wantSub && !alreadySub) {
+            long newExpiry = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000;
+            ContentValues ucv = new ContentValues();
+            ucv.put(DBHelper.USER_SUB_EXPIRY, newExpiry);
+            int updated = getContentResolver().update(MeetingProvider.URI_USER, ucv,
+                    DBHelper.USER_ID + "=?", new String[]{String.valueOf(currentUid)});
+            if (updated != 1) {
+                for (Uri previous : insertedReservations) getContentResolver().delete(previous, null, null);
+                Toast.makeText(this, "订阅开通失败，预约未保存", Toast.LENGTH_LONG).show();
+                return false;
+            }
+            subExpiry = newExpiry;
+        }
+        for (int i = 0; i < insertedReservations.size(); i++) {
+            AlarmUtil.setAlarm(this, Long.parseLong(insertedReservations.get(i).getLastPathSegment()),
+                    starts[i] - 10 * 60_000L, "会议《" + title + "》即将开始");
         }
 
         String discLabel = FeeCalculator.getDiscountLabel(effectiveSub, room.name);
         String payNote = currentAdminLv >= 1 ? " (已支付)" : " (待审批支付)";
         String subNote = (wantSub && !alreadySub) ? " +订阅¥99" : "";
         String summary = String.format("费用¥%.2f | 押金¥%.2f | %s%s%s", fee, deposit, discLabel, subNote, payNote);
-        Toast.makeText(this, "预约成功！" + summary + (times > 1 ? " 共" + times + "条" : ""), Toast.LENGTH_LONG).show();
-        AlarmUtil.setAlarm(this, start - 10 * 60 * 1000, "会议《" + title + "》即将开始");
+        Toast.makeText(this, "预约成功！" + summary + (starts.length > 1 ? " 共" + starts.length + "条" : ""), Toast.LENGTH_LONG).show();
         finish();
+        return true;
     }
 
     private String findNextRoomByCapacity(int attendees) {
@@ -388,8 +406,17 @@ public class BookingActivity extends AppCompatActivity {
         }
     };
 
-    @Override protected void onStart() { super.onStart(); bindService(new Intent(this, ConflictCheckService.class), serviceConnection, BIND_AUTO_CREATE); }
-    @Override protected void onStop() { super.onStop(); if (isServiceBound) { unbindService(serviceConnection); isServiceBound = false; } }
+    @Override protected void onStart() {
+        super.onStart();
+        bindRequested = bindService(new Intent(this, ConflictCheckService.class), serviceConnection, BIND_AUTO_CREATE);
+    }
+    @Override protected void onStop() {
+        super.onStop();
+        if (bindRequested) unbindService(serviceConnection);
+        bindRequested = false;
+        isServiceBound = false;
+        conflictCheckService = null;
+    }
 
     static class RoomItem {
         int id, capacity, basePrice, desks, chairs; String name;

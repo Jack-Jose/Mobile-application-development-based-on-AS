@@ -48,7 +48,8 @@ public class MeetingReminderReceiver extends BroadcastReceiver {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         if (notificationManager.areNotificationsEnabled()) {
             Notification notification = builder.build();
-            notificationManager.notify(1001, notification);
+            long reservationId = intent.getLongExtra("reservation_id", 0);
+            notificationManager.notify(Long.hashCode(reservationId), notification);
         }
     }
 }

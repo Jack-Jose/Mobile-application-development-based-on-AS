@@ -23,8 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MyReservationsActivity extends AppCompatActivity {
     private static final String TAG = "MyReservations";
@@ -104,6 +106,15 @@ public class MyReservationsActivity extends AppCompatActivity {
 
     private void loadMyReservations() {
         allList.clear();
+        Map<Integer, String> roomNames = new HashMap<>();
+        try (Cursor rooms = getContentResolver().query(MeetingProvider.URI_ROOM,
+                new String[]{DBHelper.ROOM_ID, DBHelper.ROOM_NAME}, null, null, null)) {
+            if (rooms != null) {
+                while (rooms.moveToNext()) roomNames.put(rooms.getInt(0), rooms.getString(1));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "room query", e);
+        }
         Cursor c = null;
         try {
             c = getContentResolver().query(MeetingProvider.URI_RES,
@@ -121,15 +132,7 @@ public class MyReservationsActivity extends AppCompatActivity {
                     String note = c.getString(c.getColumnIndexOrThrow(DBHelper.RES_NOTE));
                     if (note == null) note = "";
 
-                    String roomName = "会议室" + roomId;
-                    Cursor rc = null;
-                    try {
-                        rc = getContentResolver().query(MeetingProvider.URI_ROOM,
-                                new String[]{DBHelper.ROOM_NAME}, DBHelper.ROOM_ID + "=?",
-                                new String[]{String.valueOf(roomId)}, null);
-                        if (rc != null && rc.moveToFirst()) roomName = rc.getString(0);
-                    } catch (Exception e) { Log.e(TAG, "room query", e); }
-                    finally { if (rc != null) rc.close(); }
+                    String roomName = roomNames.getOrDefault(roomId, "会议室" + roomId);
 
                     String sTime = dateFormat.format(new Date(start));
                     String eTime = dateFormat.format(new Date(end));
@@ -172,23 +175,63 @@ public class MyReservationsActivity extends AppCompatActivity {
     }
 
     private void showDateTimePicker(MyReservation r, int duration, String title, String note) {
+        if (duration <= 0 || duration > FeeCalculator.MAX_DURATION_MIN) {
+            Toast.makeText(this, "预约时长必须在1到360分钟之间", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Calendar c = Calendar.getInstance();
         new DatePickerDialog(this, (view, y, m, d) -> {
             new TimePickerDialog(this, (v, hh, mm) -> {
                 Calendar cal = Calendar.getInstance();
                 cal.set(y, m, d, hh, mm, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                long start = cal.getTimeInMillis();
+                long end = start + duration * 60_000L;
+                String hoursError = FeeCalculator.checkBusinessHours(start, end);
+                if (start <= System.currentTimeMillis() || hoursError != null) {
+                    Toast.makeText(this, hoursError != null ? hoursError : "不能选择过去的时间", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (hasReservationConflict(r.roomId, r.resId, start, end)) {
+                    Toast.makeText(this, "该时段已被预约", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 ContentValues cv = new ContentValues();
-                cv.put(DBHelper.RES_START, cal.getTimeInMillis());
-                cv.put(DBHelper.RES_END, cal.getTimeInMillis() + duration * 60 * 1000L);
+                cv.put(DBHelper.RES_START, start);
+                cv.put(DBHelper.RES_END, end);
                 cv.put(DBHelper.RES_TITLE, title);
                 cv.put(DBHelper.RES_NOTE, note);
-                getContentResolver().update(
+                int updated = getContentResolver().update(
                         Uri.withAppendedPath(MeetingProvider.URI_RES, String.valueOf(r.resId)),
                         cv, null, null);
+                if (updated == 0) {
+                    Toast.makeText(this, "修改失败，请重试", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                AlarmUtil.cancelAlarm(this, r.resId);
+                AlarmUtil.setAlarm(this, r.resId, start - 10 * 60_000L,
+                        "会议《" + title + "》即将开始");
                 Toast.makeText(this, "修改成功", Toast.LENGTH_SHORT).show();
                 try { loadMyReservations(); } catch (Exception e) { Log.e(TAG, "reload", e); }
             }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private boolean hasReservationConflict(int roomId, long excludedId, long start, long end) {
+        try (Cursor reservations = getContentResolver().query(MeetingProvider.URI_RES,
+                new String[]{DBHelper.RES_ID, DBHelper.RES_START, DBHelper.RES_END},
+                DBHelper.RES_ROOM_ID + "=? AND " + DBHelper.RES_STATUS + " IN (0,1)",
+                new String[]{String.valueOf(roomId)}, null)) {
+            if (reservations == null) return true;
+            while (reservations.moveToNext()) {
+                if (reservations.getLong(0) != excludedId
+                        && start < reservations.getLong(2) && end > reservations.getLong(1)) return true;
+            }
+            return false;
+        } catch (Exception e) {
+            Log.e(TAG, "conflict check failed", e);
+            return true;
+        }
     }
 
     private void cancelReservation(long resId) {
@@ -198,8 +241,13 @@ public class MyReservationsActivity extends AppCompatActivity {
                 .setPositiveButton("确定", (d, w) -> {
                     ContentValues cv = new ContentValues();
                     cv.put(DBHelper.RES_STATUS, 3);
-                    getContentResolver().update(Uri.withAppendedPath(MeetingProvider.URI_RES, String.valueOf(resId)),
+                    int updated = getContentResolver().update(Uri.withAppendedPath(MeetingProvider.URI_RES, String.valueOf(resId)),
                             cv, null, null);
+                    if (updated == 0) {
+                        Toast.makeText(this, "取消失败，请重试", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    AlarmUtil.cancelAlarm(this, resId);
                     Toast.makeText(this, "已取消预约", Toast.LENGTH_SHORT).show();
                     try { loadMyReservations(); } catch (Exception e) { Log.e(TAG, "reload after cancel", e); }
                 })
